@@ -405,4 +405,202 @@ public class MatrixOperation {
      
      return resultSet;
     }
+    
+    /**
+     * 
+     * invokes all the methods methods(getX,getY,getZ,getConst) and rearrange the equation into the correct form and signals.
+     */
+    private ArrayList<Integer> fixSignal3x3(String equation) throws Exception{
+    
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        int x = getX(equation);
+        int y = getY(equation);
+        int cons = getConst(equation);
+        int z = getZ(equation);
+        
+        /*if(x == 0 || y == 0 || z==0){
+            throw new Exception("the inserted equation is not right");
+        }*/
+        // this case is to take care of reformatting the equation to the right format
+        int index = equation.indexOf("=");
+        String afterEqual = equation.substring(index);
+        
+        if(afterEqual.contains(String.valueOf(x) + "x")){
+            if(String.valueOf(x).substring(0,1).equals("-")){
+                    x = Integer.parseInt(String.valueOf(x).substring(1));
+            }else{
+                    x = Integer.parseInt("-" + String.valueOf(x));
+            }
+        }
+
+        if(afterEqual.contains(String.valueOf(y) + "y")){
+            if(String.valueOf(y).substring(0,1).equals("-")){
+                    y = Integer.parseInt(String.valueOf(y).substring(1));
+            }else{
+                    y = Integer.parseInt("-" + String.valueOf(y));
+            }
+        }
+        
+        if(afterEqual.contains(String.valueOf(z) + "z")){
+            if(String.valueOf(z).substring(0,1).equals("-")){
+                    z = Integer.parseInt(String.valueOf(z).substring(1));
+            }else{
+                    z = Integer.parseInt("-" + String.valueOf(z));
+            }
+        }
+
+        if(!afterEqual.contains(String.valueOf(cons))){
+            if(String.valueOf(cons).substring(0,1).equals("-")){
+                    cons = Integer.parseInt(String.valueOf(cons).substring(1));
+            }else{
+                    cons = Integer.parseInt("-" + String.valueOf(cons));
+            }
+        }
+        
+        
+        // this part is to change all the signals in case x is negative
+        if(String.valueOf(x).substring(0,1).equals("-")){
+            x = Integer.parseInt(String.valueOf(x).substring(1));
+            if(String.valueOf(y).substring(0,1).equals("-")){
+            
+                y = Integer.parseInt(String.valueOf(y).substring(1));
+            }else{
+                y = Integer.parseInt("-" + String.valueOf(y));
+            }
+            
+            if(String.valueOf(cons).substring(0,1).equals("-")){
+            
+                cons = Integer.parseInt(String.valueOf(cons).substring(1));
+            }else{
+                cons = Integer.parseInt("-" + String.valueOf(cons));
+            }
+            if(String.valueOf(z).substring(0,1).equals("-")){
+            
+                z = Integer.parseInt(String.valueOf(z).substring(1));
+            }else{
+                z = Integer.parseInt("-" + String.valueOf(z));
+            }
+            list.add(x);
+            list.add(y);
+            list.add(z);
+            list.add(cons);
+        
+        }else{
+            list.add(x);
+            list.add(y);
+            list.add(z);
+            list.add(cons);
+            
+        }
+            return list;
+    }
+    
+     /**
+     * receives three equations, get the values that comes with x, y and z, fix their signals with fixSignal3x3 method, and then build the matrixA 3x3.
+     * @param equation1
+     * @param equation2
+     * @param equation3
+     * @return MatrixA
+     * @throws Exception 
+     */
+    private int[][] buildingMatrixA3x3(String equation1 , String equation2, String equation3) throws Exception{
+        //just overload method with another variable for 3x3
+    
+    int[][] matrixA = new int[3][3];
+        matrixA[0][0] = fixSignal3x3(equation1).get(0);
+        matrixA[0][1] = fixSignal3x3(equation1).get(1);
+        matrixA[0][2] = fixSignal3x3(equation1).get(2);
+        matrixA[1][0] = fixSignal3x3(equation2).get(0);
+        matrixA[1][1] = fixSignal3x3(equation2).get(1);
+        matrixA[1][2] = fixSignal3x3(equation2).get(2);
+        matrixA[2][0] = fixSignal3x3(equation3).get(0);
+        matrixA[2][1] = fixSignal3x3(equation3).get(1);
+        matrixA[2][2] = fixSignal3x3(equation3).get(2);
+
+    return matrixA;
+    }
+    
+    /**
+     * receives three equations, get the values of the constants, fix their signal with fixSignal3x3 method, and then build the matrixB 3x3.
+     * @param equation1
+     * @param equation2
+     * @param equation3
+     * @return MatrixB
+     * @throws Exception 
+     */
+    private double[][] buildingMatrixB3x3(String equation1 , String equation2, String equation3) throws Exception{
+    
+        double[][] matrixConst = new double[3][1];
+        matrixConst[0][0] = fixSignal3x3(equation1).get(3);
+        matrixConst[1][0] = fixSignal3x3(equation2).get(3);
+        matrixConst[2][0] = fixSignal3x3(equation3).get(3);
+        
+    return matrixConst;
+    }
+    
+    /**
+     * This method calls the built matrixA from last method, find its determinant, and then calculate the inverse of the matrix A.
+     * @param equation1
+     * @param equation2
+     * @param equation3
+     * @return Inverse of Matrix A
+     * @throws Exception 
+     */
+    private double[][] findingInverseOfMatrixA3x3(String equation1,String equation2,String equation3) throws Exception{
+    
+        //first find determinant
+        int[][] matrixA = buildingMatrixA3x3(equation1, equation2,equation3);
+        
+        int[] minors = new int[9];
+        minors[0] = (matrixA[1][1] * matrixA[2][2]) - (matrixA[1][2] * matrixA[2][1]);
+        minors[1] = -((matrixA[1][0] * matrixA[2][2]) - (matrixA[1][2] * matrixA[2][0]));
+        minors[2] = (matrixA[1][0] * matrixA[2][1]) - (matrixA[1][1] * matrixA[2][0]);
+        minors[3] = -((matrixA[0][1] * matrixA[2][2]) - (matrixA[0][2] * matrixA[2][1]));
+        minors[4] = (matrixA[0][0] * matrixA[2][2]) - (matrixA[0][2] * matrixA[2][0]);
+        minors[5] = -((matrixA[0][0] * matrixA[2][1]) - (matrixA[0][1] * matrixA[2][0]));
+        minors[6] = (matrixA[0][1] * matrixA[1][2]) - (matrixA[0][2] * matrixA[1][1]);
+        minors[7] = -((matrixA[0][0] * matrixA[1][2]) - (matrixA[1][0] * matrixA[0][2]));
+        minors[8] = (matrixA[0][0] * matrixA[1][1]) - (matrixA[1][0] * matrixA[0][1]);
+        
+        
+        double determinant = (matrixA[0][0] * minors[0])+(matrixA[0][1] * minors[1])+(matrixA[0][2] * minors[2]);
+        //apply formula
+        double[][] inverseMatrix = new double[3][3];
+            inverseMatrix[0][0] = (1/determinant) * minors[0];
+            inverseMatrix[1][0] = (1/determinant) * minors[1];
+            inverseMatrix[2][0] = (1/determinant) * minors[2];
+            inverseMatrix[0][1] = (1/determinant) * minors[3];
+            inverseMatrix[1][1] = (1/determinant) * minors[4];
+            inverseMatrix[2][1] = (1/determinant) * minors[5];
+            inverseMatrix[0][2] = (1/determinant) * minors[6];
+            inverseMatrix[1][2] = (1/determinant) * minors[7];
+            inverseMatrix[2][2] = (1/determinant) * minors[8];
+        return inverseMatrix;
+    }
+    
+    /**
+     * Now that we have the inverse of matrix A, we can now apply the formula and get the values for X, Y and Z.
+     * @param equation1
+     * @param equation2
+     * @param equation3
+     * @return
+     * @throws Exception 
+     */
+    public HashMap<String,Double> solvingEquation3x3(String equation1,String equation2, String equation3) throws Exception{
+    
+    double[][] matrixA = findingInverseOfMatrixA3x3(equation1,equation2,equation3);
+        //System.out.println(matrixA[0][0]);
+    double[][] matrixB = buildingMatrixB3x3(equation1,equation2,equation3);
+    HashMap<String,Double> resultSet = new HashMap<String,Double>();
+    
+    double xResult = (matrixA[0][0] * matrixB[0][0]) + (matrixA[0][1] * matrixB[1][0]) + matrixA[0][2] * matrixB[2][0];
+    double yResult = (matrixA[1][0] * matrixB[0][0]) + (matrixA[1][1] * matrixB[1][0]) + (matrixA[1][2] * matrixB[2][0]);
+    double zResult = (matrixA[2][0] * matrixB[0][0]) + (matrixA[2][1] * matrixB[1][0]) + (matrixA[2][2] * matrixB[2][0]);
+    
+     resultSet.put("x",xResult);
+     resultSet.put("y",yResult);
+     resultSet.put("z",zResult);
+     
+     return resultSet;
+    }
 }

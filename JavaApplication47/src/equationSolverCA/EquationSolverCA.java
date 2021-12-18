@@ -5,6 +5,8 @@
  */
 package equationSolverCA;
 
+import equationSolverUI.LoginMenuUI;
+
 /**
  *
  * @author gabri
@@ -16,6 +18,9 @@ public class EquationSolverCA {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        
+        LoginMenuUI equationSolverUI = new LoginMenuUI();
+      equationSolverUI.setVisible(true);
     }
     
 }
