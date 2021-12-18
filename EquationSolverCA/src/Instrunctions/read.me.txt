@@ -1,0 +1,4 @@
+To run the program properly, the database username and password must be adjusted before running:
+
+
+you can find these fields on the package dbRepository --> DbConnector --> .openConnection() method
