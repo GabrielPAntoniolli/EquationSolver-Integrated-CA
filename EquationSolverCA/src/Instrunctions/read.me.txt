@@ -1,4 +1,14 @@
+
+
+
+github.com/GabrielPAntoniolli/EquationSolver-Integrated-CA - GitHub link
+
+Gabriel Antoniolli - 2020352
+Nathalia Gomes - 2020350
+
 To run the program properly, the database username and password must be adjusted before running:
 
 
 you can find these fields on the package dbRepository --> DbConnector --> .openConnection() method
+
+warning**** in some situations, you might have to add the mySql jconnector jar file to the library folder again.
